@@ -1,18 +1,29 @@
 import { Request, Response } from "express";
 import Contract from "../models/Contract";
 
-// Criar um novo contrato
-export const createContract = async (req: Request, res: Response) => {
+export const createContract = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { clientId, details, startDate, endDate } = req.body;
+    const { clientId, terms, contractId, operationDate, status } = req.body;
+
+    if (!clientId || !terms || !contractId || !operationDate || !status) {
+      res.status(400).json({ error: "Todos os campos são obrigatórios." });
+      return;
+    }
+
     const contract = await Contract.create({
       clientId,
-      details,
-      startDate,
-      endDate,
+      terms,
+      contractId,
+      operationDate,
+      status,
     });
+
     res.status(201).json(contract);
   } catch (error) {
+    console.error("Erro ao criar contrato:", error);
     res.status(500).json({ error: "Erro ao criar contrato." });
   }
 };
@@ -23,6 +34,7 @@ export const getContracts = async (req: Request, res: Response) => {
     const contracts = await Contract.findAll();
     res.status(200).json(contracts);
   } catch (error) {
+    console.error("Erro ao buscar contratos:", error);
     res.status(500).json({ error: "Erro ao buscar contratos." });
   }
 };
@@ -37,6 +49,7 @@ export const getContractById = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Contrato não encontrado." });
     }
   } catch (error) {
+    console.error("Erro ao buscar contrato:", error);
     res.status(500).json({ error: "Erro ao buscar contrato." });
   }
 };
@@ -46,12 +59,21 @@ export const updateContract = async (req: Request, res: Response) => {
   try {
     const contract = await Contract.findByPk(req.params.id);
     if (contract) {
-      const updatedContract = await contract.update(req.body);
+      // Atualizar apenas os campos permitidos
+      const { clientId, terms, contractId, operationDate, status } = req.body;
+      const updatedContract = await contract.update({
+        clientId,
+        terms,
+        contractId,
+        operationDate,
+        status,
+      });
       res.status(200).json(updatedContract);
     } else {
       res.status(404).json({ error: "Contrato não encontrado." });
     }
   } catch (error) {
+    console.error("Erro ao atualizar contrato:", error);
     res.status(500).json({ error: "Erro ao atualizar contrato." });
   }
 };
@@ -67,6 +89,7 @@ export const deleteContract = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Contrato não encontrado." });
     }
   } catch (error) {
+    console.error("Erro ao excluir contrato:", error);
     res.status(500).json({ error: "Erro ao excluir contrato." });
   }
 };

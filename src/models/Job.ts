@@ -1,14 +1,14 @@
 // src/models/Job.ts
-import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../config/db'; // Importando a instância de conexão do Sequelize
-import Contract from './Contract'; // Relacionamento com Contract
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../config/db"; // Importando a instância de conexão do Sequelize
+import Contract from "./Contract"; // Relacionamento com Contract
 
 class Job extends Model {
   public id!: number;
   public contractId!: number;
   public description!: string;
   public operationDate!: Date;
-  public price!: number;  
+  public price!: number;
   public paymentDate?: Date;
 }
 
@@ -39,17 +39,21 @@ Job.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    paid: {
+      type: DataTypes.TINYINT,
+      defaultValue: 0,
+    },
   },
   {
     sequelize,
-    modelName: 'Job',
-    tableName: 'JOB',
+    modelName: "Job",
+    tableName: "JOB",
     timestamps: false,
   }
 );
 
 // Definindo relacionamento
-Job.belongsTo(Contract, { foreignKey: 'contractId' });
-Contract.hasMany(Job, { foreignKey: 'contractId' });
+Job.belongsTo(Contract, { foreignKey: "contractId" });
+Contract.hasMany(Job, { foreignKey: "contractId" });
 
 export default Job;
