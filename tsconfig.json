@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist", // Pasta de saída para o código compilado
+    "rootDir": "./src", // Pasta onde estão os arquivos .ts
+    "target": "ES6", // Versão do JavaScript de saída
+    "module": "commonjs", // Módulo que será usado
+    "esModuleInterop": true, // Facilita importações de módulos ES
+    "strict": true, // Ativa verificações rigorosas
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}
