@@ -1,13 +1,55 @@
 import { Request, Response } from 'express';
 import Deposit from '../models/Deposit';
+import Profile from '../models/Profile';
+import { sequelize } from '../config/db'; 
 
 // Criar um novo depósito
+// Criar um novo depósito e atualizar o saldo do cliente
 export const createDeposit = async (req: Request, res: Response) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const { clientId, operationDate, depositValue } = req.body;
-    const deposit = await Deposit.create({ clientId, operationDate, depositValue });
+
+    if (depositValue < 0){ 
+      res.status(404).json({
+        error: "Não pode depositar valor negativo!"
+      })
+    }
+
+    // Encontrar o cliente pelo ID
+    const profile = await Profile.findByPk(clientId, { transaction });
+
+    if (!profile) {
+      res.status(404).json({ error: 'Cliente não encontrado.' });
+      await transaction.rollback();
+      return;
+    }
+
+    // Inicializa o balance como 0 se for null
+    const currentBalance = profile.balance ?? 0;
+
+    // Criar o depósito
+    const deposit = await Deposit.create(
+      {
+        clientId,
+        operationDate,
+        depositValue,
+      },
+      { transaction }
+    );
+
+    // Adicionar o valor do depósito ao saldo do cliente
+    profile.balance = currentBalance + depositValue; // Atualiza o saldo
+    await profile.save({ transaction });
+
+    // Confirmar a transação
+    await transaction.commit();
+
     res.status(201).json(deposit);
   } catch (error) {
+    await transaction.rollback();
+    console.error('Erro ao criar depósito:', error);
     res.status(500).json({ error: 'Erro ao criar depósito.' });
   }
 };
