@@ -1,8 +1,7 @@
 import { Router } from "express";
 import {
   createProfile,
-  getProfiles,
-  getProfileById,
+  verifyBalanceById,
   updateProfile,
   deleteProfile,
 } from "../controllers/profileController";
@@ -19,6 +18,8 @@ import {
   getJobById,
   updateJob,
   deleteJob,
+  getJobsByContractId,
+  getTotalUnpaidJobs
 } from "../controllers/jobController";
 import {
   createPayment,
@@ -39,8 +40,7 @@ const router = Router();
 
 // Rotas para Profile
 router.post("/profiles", createProfile);
-router.get("/profiles", getProfiles);
-router.get("/profiles/:id", getProfileById);
+router.get("/profiles/:id", verifyBalanceById);
 router.put("/profiles/:id", updateProfile);
 router.delete("/profiles/:id", deleteProfile);
 
@@ -57,6 +57,8 @@ router.get("/jobs", getJobs);
 router.get("/jobs/:id", getJobById);
 router.put("/jobs/:id", updateJob);
 router.delete("/jobs/:id", deleteJob);
+router.get('/jobs/unpaid/total', getTotalUnpaidJobs);
+router.get("/jobs/jobscontract/:contractId", getJobsByContractId);
 
 // Rotas para Payment
 router.post("/payments", createPayment);

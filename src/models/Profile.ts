@@ -1,7 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/db';
 
-class Profile extends Model {}
+class Profile extends Model {
+  balance!: number;
+}
 
 Profile.init(
   {
@@ -25,6 +27,7 @@ Profile.init(
     balance: {
       type: DataTypes.DOUBLE,
       allowNull: true,
+      defaultValue: 0,
     },
     type: {
       type: DataTypes.STRING(45),
