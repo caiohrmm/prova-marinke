@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Deposit from '../models/Deposit';
 import Profile from '../models/Profile';
-import { sequelize } from '../config/db'; 
+import { sequelize } from '../config/db';
 
 // Criar um novo depósito
 // Criar um novo depósito e atualizar o saldo do cliente
@@ -11,10 +11,11 @@ export const createDeposit = async (req: Request, res: Response) => {
   try {
     const { clientId, operationDate, depositValue } = req.body;
 
-    if (depositValue < 0){ 
+    if (depositValue < 0) {
       res.status(404).json({
         error: "Não pode depositar valor negativo!"
       })
+      return
     }
 
     // Encontrar o cliente pelo ID
